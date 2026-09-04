@@ -11,7 +11,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://convokitapp.github.io/ConvoKit-Android-Maven/")
+        maven("https://maven.convokit.app/")
     }
 }
 

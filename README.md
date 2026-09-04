@@ -1,7 +1,8 @@
 # ConvoKit Android SDK example
 
 A public native Android example that consumes the compiled ConvoKit SDK from
-the public Maven feed. It does not include or copy the private SDK source.
+the public Maven feed at <https://maven.convokit.app>. It does not include or
+copy the private SDK source.
 
 The app demonstrates:
 
