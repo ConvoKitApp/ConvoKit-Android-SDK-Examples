@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="convokit_primary">#0D8F78</color>
+    <color name="convokit_primary_dark">#08705E</color>
+    <color name="convokit_surface">#F6F9F8</color>
+    <color name="convokit_text">#18221F</color>
+</resources>

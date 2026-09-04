@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ConvoKit Android</string>
+    <string name="title">Open chatroom</string>
+    <string name="subtitle">Enter any user ID and a valid room ID to join the shared ConvoKit backend.</string>
+    <string name="user_id_hint">Demo user ID</string>
+    <string name="room_id_hint">Chatroom ID</string>
+    <string name="join">Join room</string>
+    <string name="message_hint">Write a message</string>
+    <string name="send">Send</string>
+    <string name="not_connected">Not connected</string>
+</resources>
