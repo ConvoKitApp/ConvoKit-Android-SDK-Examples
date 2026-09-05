@@ -29,12 +29,14 @@ granting demo membership and returning a short-lived user token.
 
 ## Use your own backend
 
-Replace the three public `buildConfigField` values in `app/build.gradle.kts`:
+Replace the two public `buildConfigField` values in `app/build.gradle.kts`:
 
-- `CONVOKIT_API_URL`: your deployed ConvoKit backend;
 - `CONVOKIT_CLIENT_ID`: your public app client ID;
 - `DEMO_BACKEND_URL`: your application's backend, implementing the token and
   optional join endpoints used in `MainActivity`.
+
+The SDK uses the managed `https://api.convokit.app` endpoint automatically.
+Pass a custom `backendUrl` only for local testing or a self-hosted deployment.
 
 In production, authenticate your application user in the token endpoint and
 derive the app-user ID server-side. Never add `CONVOKIT_CLIENT_SECRET` to an

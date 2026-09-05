@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
     private val convoKit by lazy {
         ConvoKitClient(
-            backendUrl = BuildConfig.CONVOKIT_API_URL,
             clientId = BuildConfig.CONVOKIT_CLIENT_ID,
             tokenProvider = TokenProvider(::issueUserToken),
             httpClient = httpClient,
