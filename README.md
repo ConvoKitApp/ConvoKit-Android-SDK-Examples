@@ -34,13 +34,12 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Coordinated unreleased SDK validation
+### Published 0.4.0 SDKs
 
-The feature branch retains existing published dependency versions so public CI
-can build without private-source access. Private SDK/UI CI additionally substitutes
-the exact reviewed unreleased pair and builds this consumer. Those are separate
-checks: a public-feed build does not prove the unreleased recovery contracts are
-available in Maven. Update both version constraints after the coordinated release.
+The example consumes the published 0.4.0 core and UI from maven.convokit.app.
+SDK-backed UI automatically refreshes inboxes after room or membership changes
+and correlates pending sends with live/history confirmations before HTTP returns.
+Public builds require no private-source access or dependency substitution.
 No private library source, archive, credentials or implementation is committed here.
 
 The checked-in defaults use the deliberately open ConvoKit demo broker at
