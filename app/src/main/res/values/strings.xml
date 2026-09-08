@@ -6,7 +6,10 @@
     <string name="user_id_hint">Demo user ID</string>
     <string name="room_id_hint">Chatroom ID</string>
     <string name="join">Join room</string>
-    <string name="message_hint">Write a message</string>
-    <string name="send">Send</string>
     <string name="not_connected">Not connected</string>
+    <string name="enter_both">Enter both a user ID and room ID.</string>
+    <string name="connecting">Connecting…</string>
+    <string name="disconnecting">Disconnecting…</string>
+    <string name="sdk_error">ConvoKit request failed (%1$s). Check access and try again.</string>
+    <string name="connection_failed">Could not connect. Check your connection and demo backend, then try again.</string>
 </resources>
