@@ -34,11 +34,16 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.4.0 SDKs
+### Published 0.6.0 SDKs
 
-The example consumes the published 0.4.0 core and UI from maven.convokit.app.
-SDK-backed UI automatically refreshes inboxes after room or membership changes
-and correlates pending sends with live/history confirmations before HTTP returns.
+The example consumes the published 0.6.0 core and UI from maven.convokit.app.
+The embedded room acknowledges a concrete message for precise read positions,
+defers acknowledgements while the host is hidden, and correlates pending sends
+with live/history confirmations before HTTP returns. The library's SDK-backed
+conversation list pages `listInbox` (`GET /api/v1/inbox`) and renders previews,
+activity times and unread badges by itself; this sample embeds only the room,
+so see the [UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples)
+for that list.
 Public builds require no private-source access or dependency substitution.
 No private library source, archive, credentials or implementation is committed here.
 
