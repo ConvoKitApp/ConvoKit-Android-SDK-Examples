@@ -34,16 +34,24 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.6.0 SDKs
+### Published 0.7.0 SDKs
 
-The example consumes the published 0.6.0 core and UI from maven.convokit.app.
+The example consumes the published 0.7.0 core and UI from maven.convokit.app.
 The embedded room acknowledges a concrete message for precise read positions,
 defers acknowledgements while the host is hidden, and correlates pending sends
-with live/history confirmations before HTTP returns. The library's SDK-backed
-conversation list pages `listInbox` (`GET /api/v1/inbox`) and renders previews,
-activity times and unread badges by itself; this sample embeds only the room,
-so see the [UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples)
-for that list.
+with live/history confirmations before HTTP returns. Since 0.7.0 the room also
+captures the caller's own `Conversation.membership.privateStateVersion` when it
+opens and sends it with every targeted acknowledgement, so a private "mark
+unread" marker set from another device after the open survives that
+acknowledgement; a marked room with no rendered messages is cleared by one
+conditional `clearConversationUnread` instead. The marker is never shown to
+other members. The library's SDK-backed conversation list pages `listInbox`
+(`GET /api/v1/inbox`), renders previews, activity times and unread badges by
+itself (a numberless dot named `Unread` for a room that is unread only through
+its marker) and exposes `markUnread`/`clearUnread` on its controller; this
+sample embeds only the room, so see the
+[UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples)
+for that list and its "Mark unread" affordance.
 Public builds require no private-source access or dependency substitution.
 No private library source, archive, credentials or implementation is committed here.
 
