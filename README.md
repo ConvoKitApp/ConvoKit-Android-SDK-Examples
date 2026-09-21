@@ -10,7 +10,7 @@ The app demonstrates:
 - obtaining a user token from an application-owned backend;
 - joining a chatroom by ID through that backend;
 - embedding `ConvoKitConversation` from `app.convokit:convokit-android-ui` in an Android Views application with `ComposeView`;
-- delegating message history, sending, media rendering, typing and read receipts to the reusable UI library;
+- delegating message history, sending, editing and deleting your own messages, media rendering, typing and read receipts to the reusable UI library;
 - creating an adapter after each successful login and disposing the old conversation before disconnecting or switching users.
 
 The sample no longer maintains a second message renderer, composer, or raw
@@ -34,24 +34,40 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.7.0 SDKs
+### Published 0.8.0 SDKs
 
-The example consumes the published 0.7.0 core and UI from maven.convokit.app.
+The example consumes the published 0.8.0 core and UI from maven.convokit.app.
 The embedded room acknowledges a concrete message for precise read positions,
-defers acknowledgements while the host is hidden, and correlates pending sends
-with live/history confirmations before HTTP returns. Since 0.7.0 the room also
-captures the caller's own `Conversation.membership.privateStateVersion` when it
-opens and sends it with every targeted acknowledgement, so a private "mark
-unread" marker set from another device after the open survives that
-acknowledgement; a marked room with no rendered messages is cleared by one
-conditional `clearConversationUnread` instead. The marker is never shown to
-other members. The library's SDK-backed conversation list pages `listInbox`
-(`GET /api/v1/inbox`), renders previews, activity times and unread badges by
-itself (a numberless dot named `Unread` for a room that is unread only through
-its marker) and exposes `markUnread`/`clearUnread` on its controller; this
-sample embeds only the room, so see the
+defers acknowledgements while the host is hidden, correlates pending sends
+with live/history confirmations before HTTP returns, and sends the caller's
+own `Conversation.membership.privateStateVersion` with every targeted
+acknowledgement so a private "mark unread" marker set from another device
+survives it. Since 0.8.0 the room also lets the connected user edit and
+delete their own confirmed messages through the library's default rows and
+composer, with no host code: a long press on one of your own rows (accessible
+action `Message actions`) opens `Edit message` / `Delete message`. Editing
+prefills the composer with the original text under an `Editing message`
+banner (the unsent draft is stashed and restored on `Cancel` or after a
+successful save) and the `Save` button sends the row's `revision` through the
+core's author-tier `editMessage(messageId, text, revision)`
+(`PATCH /api/v1/messages/:id/own`); attachments are never changed by an edit
+and clearing the field saves `null` to remove a caption. When another device
+edited the same message first the backend answers 409 `REVISION_CONFLICT`:
+the room reloads the row, shows its current content, keeps the typed text and
+retries with the fresh revision on the next save. Deleting confirms
+(`Delete this message?`) before calling `deleteMessage(messageId)`
+(`DELETE /api/v1/messages/:id/own`); the removal cannot be undone, other
+devices drop the row through the room's deletion notification, and files
+already received cannot be retracted. Edited rows show `Edited` beside the
+time from `Message.isEdited` (`revision > 0`), never from `updatedAt`. Both
+author routes require the 0.8 backend. The library's SDK-backed conversation
+list pages `listInbox` (`GET /api/v1/inbox`), renders previews, activity times
+and unread badges by itself (a numberless dot named `Unread` for a room that
+is unread only through its marker) and exposes `markUnread`/`clearUnread` on
+its controller; this sample embeds only the room, so see the
 [UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples)
-for that list and its "Mark unread" affordance.
+for that list, its "Mark unread" affordance and the custom row and composer
+variants that read `Message.isEdited` and edit mode from the controller.
 Public builds require no private-source access or dependency substitution.
 No private library source, archive, credentials or implementation is committed here.
 
