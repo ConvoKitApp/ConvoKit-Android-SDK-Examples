@@ -17,7 +17,7 @@ import org.robolectric.annotation.Config
 class MainActivityTest {
     @Test fun `initial view shows only the host join form`() = withActivity { activity ->
         assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.join_form).visibility)
-        assertEquals(View.GONE, activity.findViewById<View>(R.id.chat_content).visibility)
+        assertEquals(View.GONE, activity.findViewById<View>(R.id.room).visibility)
         assertEquals(activity.getString(R.string.not_connected), activity.findViewById<TextView>(R.id.status).text)
         assertTrue(activity.findViewById<View>(R.id.join_button).isEnabled)
     }
@@ -25,12 +25,12 @@ class MainActivityTest {
     @Test fun `missing room is rejected before attempting a connection`() = withActivity { activity ->
         activity.findViewById<View>(R.id.join_button).performClick()
         assertEquals(activity.getString(R.string.enter_both), activity.findViewById<TextView>(R.id.status).text)
-        assertEquals(View.GONE, activity.findViewById<View>(R.id.chat_content).visibility)
+        assertEquals(View.GONE, activity.findViewById<View>(R.id.room).visibility)
         assertTrue(activity.findViewById<View>(R.id.join_button).isEnabled)
     }
 
     @Test fun `host consumes system cutout and keyboard insets without accumulating padding`() = withActivity { activity ->
-        val root = activity.findViewById<View>(R.id.chat_content).parent as View
+        val root = activity.findViewById<View>(R.id.room).parent as View
         val insets = WindowInsetsCompat.Builder()
             .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(0, 24, 0, 18))
             .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(12, 0, 0, 0))
@@ -40,6 +40,16 @@ class MainActivityTest {
             assertTrue(ViewCompat.dispatchApplyWindowInsets(root, insets).isConsumed)
             assertEquals(listOf(12, 24, 0, 220), listOf(root.paddingLeft, root.paddingTop, root.paddingRight, root.paddingBottom))
         }
+    }
+
+    @Test fun `the core surface demo waits for a joined room`() = withActivity { activity ->
+        val button = activity.findViewById<View>(R.id.reply_demo_button)
+        assertFalse(button.isEnabled)
+        button.performClick()
+        assertEquals(
+            activity.getString(R.string.reply_demo_hint),
+            activity.findViewById<TextView>(R.id.reply_demo_status).text,
+        )
     }
 
     private fun withActivity(check: (MainActivity) -> Unit) {

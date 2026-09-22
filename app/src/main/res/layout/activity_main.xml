@@ -71,9 +71,42 @@
         </LinearLayout>
     </ScrollView>
 
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/chat_content"
+    <LinearLayout
+        android:id="@+id/room"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:visibility="gone">
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/chat_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reply_demo_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/reply_demo" />
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:layout_marginTop="8dp"
+                android:fillViewport="true">
+                <TextView
+                    android:id="@+id/reply_demo_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityLiveRegion="polite"
+                    android:text="@string/reply_demo_hint"
+                    android:textColor="@color/convokit_text"
+                    android:textSize="13sp" />
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
 </FrameLayout>

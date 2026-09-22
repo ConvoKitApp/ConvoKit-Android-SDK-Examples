@@ -12,4 +12,8 @@
     <string name="disconnecting">Disconnecting…</string>
     <string name="sdk_error">ConvoKit request failed (%1$s). Check access and try again.</string>
     <string name="connection_failed">Could not connect. Check your connection and demo backend, then try again.</string>
+    <string name="reply_demo">Run the quoted-reply demo</string>
+    <string name="reply_demo_hint">Quotes the newest message, resolves every quoted row on the page in one call, centres a window on the quote and shows the two 404s a host must tell apart. Running it sends one message to this room.</string>
+    <string name="reply_demo_running">Running the quoted-reply demo…</string>
+    <string name="reply_demo_failed">The quoted-reply demo could not reach ConvoKit. Check your connection and try again.</string>
 </resources>

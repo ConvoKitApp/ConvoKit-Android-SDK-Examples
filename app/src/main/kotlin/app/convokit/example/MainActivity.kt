@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
     private val convoKit by convoKitDelegate
+    private val replyProbe by lazy { QuotedReplyProbe(ConvoKitReplySurface(convoKit)) }
+    private var joinedRoomId: String? = null
     private val roomBack = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = leaveRoom()
     }
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         binding.chatContent.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         onBackPressedDispatcher.addCallback(this, roomBack)
         binding.joinButton.setOnClickListener { joinRoom() }
+        binding.replyDemoButton.setOnClickListener { runReplyDemo() }
     }
 
     private fun joinRoom() {
@@ -99,7 +102,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 binding.joinForm.visibility = View.GONE
-                binding.chatContent.visibility = View.VISIBLE
+                binding.room.visibility = View.VISIBLE
+                joinedRoomId = roomId
+                binding.replyDemoStatus.setText(R.string.reply_demo_hint)
+                binding.replyDemoButton.isEnabled = true
                 roomBack.isEnabled = true
             } catch (cause: Throwable) {
                 withContext(NonCancellable) { convoKit.disconnectUser() }
@@ -116,7 +122,9 @@ class MainActivity : AppCompatActivity() {
         roomBack.isEnabled = false
         // Dispose old room state before permitting a replacement login.
         binding.chatContent.disposeComposition()
-        binding.chatContent.visibility = View.GONE
+        binding.room.visibility = View.GONE
+        binding.replyDemoButton.isEnabled = false
+        joinedRoomId = null
         binding.joinForm.visibility = View.VISIBLE
         binding.status.text = getString(R.string.disconnecting)
         setBusy(true)
@@ -129,6 +137,25 @@ class MainActivity : AppCompatActivity() {
                 showError(cause)
             } finally {
                 setBusy(false)
+            }
+        }
+    }
+
+    /** Host-owned tour of the 0.9 core surface; the room itself needs no host code for it. */
+    private fun runReplyDemo() {
+        val roomId = joinedRoomId ?: return
+        binding.replyDemoButton.isEnabled = false
+        binding.replyDemoStatus.setText(R.string.reply_demo_running)
+        lifecycleScope.launch {
+            try {
+                val report = replyProbe.run(roomId).joinToString("\n\n")
+                // A report that outlived its room belongs to nobody; drop it.
+                if (joinedRoomId == roomId) binding.replyDemoStatus.text = report
+            } catch (cause: Throwable) {
+                if (cause is CancellationException) throw cause
+                if (joinedRoomId == roomId) binding.replyDemoStatus.setText(R.string.reply_demo_failed)
+            } finally {
+                binding.replyDemoButton.isEnabled = joinedRoomId != null
             }
         }
     }

@@ -10,12 +10,14 @@ The app demonstrates:
 - obtaining a user token from an application-owned backend;
 - joining a chatroom by ID through that backend;
 - embedding `ConvoKitConversation` from `app.convokit:convokit-android-ui` in an Android Views application with `ComposeView`;
-- delegating message history, sending, editing and deleting your own messages, media rendering, typing and read receipts to the reusable UI library;
+- delegating message history, sending, editing and deleting your own messages, quoted replies and jump-to-message, media rendering, typing and read receipts to the reusable UI library;
+- calling the 0.9.0 core surface directly from the host: sending with `replyToMessageId`, resolving a whole page of quoted rows with one `getReplyPreviews` call, centring a window with `getMessageContext`, and telling the coded `MESSAGE_NOT_FOUND` and `CONVERSATION_NOT_FOUND` answers apart;
 - creating an adapter after each successful login and disposing the old conversation before disconnecting or switching users.
 
 The sample no longer maintains a second message renderer, composer, or raw
-Realtime collector. Room joining and token issuance remain host/backend concerns,
-not responsibilities of the UI package. The separate
+Realtime collector; the quoted-reply panel under the room is a report of what the
+core answered, not a second renderer. Room joining and token issuance remain
+host/backend concerns, not responsibilities of the UI package. The separate
 [UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples) demonstrates
 more configurable component variants. This sample does not implement a file picker
 or an attachment-download destination; provide the UI callbacks for those host features.
@@ -34,9 +36,9 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.8.0 SDKs
+### Published 0.9.0 SDKs
 
-The example consumes the published 0.8.0 core and UI from maven.convokit.app.
+The example consumes the published 0.9.0 core and UI from maven.convokit.app.
 The embedded room acknowledges a concrete message for precise read positions,
 defers acknowledgements while the host is hidden, correlates pending sends
 with live/history confirmations before HTTP returns, and sends the caller's
@@ -68,6 +70,43 @@ its controller; this sample embeds only the room, so see the
 [UI showcase](https://github.com/ConvoKitApp/ConvoKit-Android-UI-Examples)
 for that list, its "Mark unread" affordance and the custom row and composer
 variants that read `Message.isEdited` and edit mode from the controller.
+
+Since 0.9.0 the room also quotes messages and jumps to a quoted one, again with
+no host code: the long-press menu gains `Reply`, the composer shows a
+cancellable `Replying to` strip, and a reply renders a `Quoted message` block
+above its text carrying the quoted author and an excerpt,
+`Original message unavailable` once the original is gone, or the bare reference
+while it is still resolving. Activating that block (`Go to quoted message`)
+centres the room on the original, highlights it for about two seconds and
+offers a way back to the latest. The quoted text is never copied onto the
+reply — it is re-read — so an edit of the original shows through and deleting
+the original leaves the reference in place. Both reads need the 0.9 backend.
+
+Under the room this sample adds a host-owned panel that drives the same 0.9.0
+core surface directly, because an application that embeds only the core has to
+drive it itself. `Run the quoted-reply demo` sends one message with
+`SendMessageInput.replyToMessageId` set to the newest row — the reference is
+written once, so no edit can move it and deleting the quoted message leaves it
+in place — then resolves every `Message.replyToMessageId` on the page with a
+single `getReplyPreviews(conversationId, messageIds)` call. The SDK
+de-duplicates those ids in first-seen order and splits them into requests of at
+most 50, and an id that is absent from a resolved answer is the only deletion
+signal, never an error: keep the reference and render "Original message
+unavailable". It then centres a window with
+`getMessageContext(conversationId, messageId = …)`, whose `olderCursor` and
+`newerCursor` are always present and nullable, a null newer cursor meaning the
+window touched the newest message as of the query. Finally it runs the two
+failures a host has to tell apart: an unknown `messageId` answers 404
+`MESSAGE_NOT_FOUND`, meaning the target does not exist, was deleted or belongs
+to another room, and a room the user is not an active member of answers 404
+`CONVERSATION_NOT_FOUND` from the membership check that runs before any message
+id is read. A 404 with no code at all *from either of those two routes* is
+neither — it is a backend older than 0.9 that has neither route, so hide the
+affordances rather than retrying. On the routes that predate 0.9, reading
+history and sending, an uncoded 404 is the shipped membership answer and says
+nothing about the backend's version, so the panel reports those two separately.
+Running the demo posts a message to the room you joined.
+
 Public builds require no private-source access or dependency substitution.
 No private library source, archive, credentials or implementation is committed here.
 
