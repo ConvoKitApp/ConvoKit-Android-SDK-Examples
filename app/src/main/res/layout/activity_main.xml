@@ -107,6 +107,22 @@
                     android:textColor="@color/convokit_text"
                     android:textSize="13sp" />
             </ScrollView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reaction_demo_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:text="@string/reaction_demo" />
+            <TextView
+                android:id="@+id/reaction_demo_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:accessibilityLiveRegion="polite"
+                android:text="@string/reaction_demo_hint"
+                android:textColor="@color/convokit_text"
+                android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
