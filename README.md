@@ -37,9 +37,9 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.9.0 SDKs
+### Published 0.10.0 SDKs
 
-The example consumes the published 0.9.0 core and UI from maven.convokit.app.
+The example consumes the published 0.10.0 core and UI from maven.convokit.app.
 The embedded room acknowledges a concrete message for precise read positions,
 defers acknowledgements while the host is hidden, correlates pending sends
 with live/history confirmations before HTTP returns, and sends the caller's
