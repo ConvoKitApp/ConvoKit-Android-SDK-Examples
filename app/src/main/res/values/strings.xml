@@ -16,4 +16,9 @@
     <string name="reply_demo_hint">Quotes the newest message, resolves every quoted row on the page in one call, centres a window on the quote and shows the two 404s a host must tell apart. Running it sends one message to this room.</string>
     <string name="reply_demo_running">Running the quoted-reply demo…</string>
     <string name="reply_demo_failed">The quoted-reply demo could not reach ConvoKit. Check your connection and try again.</string>
+    <string name="reaction_demo">Run the reaction API demo</string>
+    <string name="reaction_demo_hint">Adds and removes one 👍🏽 on the newest message, reads its batched summary, and pages the reactor list. The conversation above handles reactions automatically.</string>
+    <string name="reaction_demo_running">Running the reaction API demo…</string>
+    <string name="reaction_demo_empty">This room has no message to react to yet.</string>
+    <string name="reaction_demo_failed">The reaction API demo could not reach ConvoKit. Check access and try again.</string>
 </resources>

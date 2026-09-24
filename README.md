@@ -12,6 +12,7 @@ The app demonstrates:
 - embedding `ConvoKitConversation` from `app.convokit:convokit-android-ui` in an Android Views application with `ComposeView`;
 - delegating message history, sending, editing and deleting your own messages, quoted replies and jump-to-message, media rendering, typing and read receipts to the reusable UI library;
 - calling the 0.9.0 core surface directly from the host: sending with `replyToMessageId`, resolving a whole page of quoted rows with one `getReplyPreviews` call, centring a window with `getMessageContext`, and telling the coded `MESSAGE_NOT_FOUND` and `CONVERSATION_NOT_FOUND` answers apart;
+- calling the reaction core API directly: add/remove one exact `👍🏽`, read a batched summary, and load the first page of reactors, while the embedded UI handles its own reaction controls;
 - creating an adapter after each successful login and disposing the old conversation before disconnecting or switching users.
 
 The sample no longer maintains a second message renderer, composer, or raw
@@ -36,9 +37,9 @@ The host handles system-bar, display-cutout and keyboard insets before embedding
 Compose, so padding is not applied twice. Local host tests use Robolectric and
 synthetic insets; they do not prove hosted authorization or physical-device chat.
 
-### Published 0.9.0 SDKs
+### Published 0.10.0 SDKs
 
-The example consumes the published 0.9.0 core and UI from maven.convokit.app.
+The example consumes the published 0.10.0 core and UI from maven.convokit.app.
 The embedded room acknowledges a concrete message for precise read positions,
 defers acknowledgements while the host is hidden, correlates pending sends
 with live/history confirmations before HTTP returns, and sends the caller's

@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, roomBack)
         binding.joinButton.setOnClickListener { joinRoom() }
         binding.replyDemoButton.setOnClickListener { runReplyDemo() }
+        binding.reactionDemoButton.setOnClickListener { runReactionDemo() }
     }
 
     private fun joinRoom() {
@@ -106,6 +107,7 @@ class MainActivity : AppCompatActivity() {
                 joinedRoomId = roomId
                 binding.replyDemoStatus.setText(R.string.reply_demo_hint)
                 binding.replyDemoButton.isEnabled = true
+                binding.reactionDemoButton.isEnabled = true
                 roomBack.isEnabled = true
             } catch (cause: Throwable) {
                 withContext(NonCancellable) { convoKit.disconnectUser() }
@@ -124,6 +126,7 @@ class MainActivity : AppCompatActivity() {
         binding.chatContent.disposeComposition()
         binding.room.visibility = View.GONE
         binding.replyDemoButton.isEnabled = false
+        binding.reactionDemoButton.isEnabled = false
         joinedRoomId = null
         binding.joinForm.visibility = View.VISIBLE
         binding.status.text = getString(R.string.disconnecting)
@@ -156,6 +159,38 @@ class MainActivity : AppCompatActivity() {
                 if (joinedRoomId == roomId) binding.replyDemoStatus.setText(R.string.reply_demo_failed)
             } finally {
                 binding.replyDemoButton.isEnabled = joinedRoomId != null
+            }
+        }
+    }
+
+    /** Direct core API tour. The Compose conversation handles its own picker and chips. */
+    private fun runReactionDemo() {
+        val roomId = joinedRoomId ?: return
+        binding.reactionDemoButton.isEnabled = false
+        binding.reactionDemoStatus.setText(R.string.reaction_demo_running)
+        lifecycleScope.launch {
+            try {
+                val newest = convoKit.getMessages(roomId, limit = 1).firstOrNull()
+                val report = if (newest == null) {
+                    getString(R.string.reaction_demo_empty)
+                } else {
+                    val emoji = "👍🏽" // Preserve the exact Unicode sequence, including its skin tone.
+                    val added = convoKit.addReaction(newest.id, emoji)
+                    val summary = convoKit.getReactionSummaries(roomId, listOf(newest.id))
+                        .firstOrNull()?.reactions?.find { it.emoji == emoji }
+                    val reactors = convoKit.listReactionUsers(newest.id, emoji, limit = 10)
+                    val removed = convoKit.removeReaction(newest.id, emoji)
+                    "Added $emoji to ${newest.id}: changed=${added.changed}; " +
+                        "count=${summary?.count ?: 0}, reactedByMe=${summary?.reactedByMe ?: false}; " +
+                        "reactors on first page=${reactors.data.size}, next page=${reactors.nextCursor != null}; " +
+                        "removed: changed=${removed.changed}."
+                }
+                if (joinedRoomId == roomId) binding.reactionDemoStatus.text = report
+            } catch (cause: Throwable) {
+                if (cause is CancellationException) throw cause
+                if (joinedRoomId == roomId) binding.reactionDemoStatus.setText(R.string.reaction_demo_failed)
+            } finally {
+                binding.reactionDemoButton.isEnabled = joinedRoomId != null
             }
         }
     }
